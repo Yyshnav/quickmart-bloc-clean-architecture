@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +24,7 @@ class _DashboardPageState extends State<DashboardPage> {
     viewportFraction: 0.88,
   );
   int _currentBannerPage = 0;
+  Timer? _bannerTimer;
 
   final Map<String, List<Color>> _categoryGradients = {
     'All': [
@@ -57,19 +59,31 @@ class _DashboardPageState extends State<DashboardPage> {
     _BannerData(
       title: 'Flat 50% OFF',
       subtitle: 'On your first order',
-      gradient: [const Color(0xFF667EEA), const Color(0xFF764BA2)],
+      gradient: [
+        const Color(0xFF667EEA),
+        const Color(0xFF764BA2),
+        const Color(0xFF4A00E0),
+      ],
       emoji: '🎉',
     ),
     _BannerData(
-      title: 'Fresh Vegetables',
+      title: 'Fresh Veggies',
       subtitle: 'Farm to table in 10 mins',
-      gradient: [const Color(0xFF11998E), const Color(0xFF38EF7D)],
+      gradient: [
+        const Color(0xFF11998E),
+        const Color(0xFF38EF7D),
+        const Color(0xFF00F260),
+      ],
       emoji: '🥬',
     ),
     _BannerData(
-      title: 'Weekend Special',
+      title: 'Weekend Deals',
       subtitle: 'Free delivery above \$25',
-      gradient: [const Color(0xFFF857A6), const Color(0xFFFF5858)],
+      gradient: [
+        const Color(0xFFF857A6),
+        const Color(0xFFFF5858),
+        const Color(0xFFFF00CC),
+      ],
       emoji: '🚀',
     ),
   ];
@@ -78,12 +92,27 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     context.read<DashboardBloc>().add(LoadDashboardDataEvent());
+    _startBannerTimer();
+  }
+
+  void _startBannerTimer() {
+    _bannerTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (_bannerController.hasClients) {
+        int nextPage = (_currentBannerPage + 1) % _banners.length;
+        _bannerController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOutCubic,
+        );
+      }
+    });
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _bannerTimer?.cancel();
     _bannerController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -113,7 +142,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     else if (state.hasError)
                       _buildErrorState()
                     else ...[
-                      _buildPromotionalBanner(),
+                      _buildPromotionalBanner(gradientColors),
                       _buildSectionHeader('Products for You'),
                       _buildProductGrid(state),
                     ],
@@ -279,7 +308,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildPromotionalBanner() {
+  Widget _buildPromotionalBanner(List<Color> gradientColors) {
     return SliverToBoxAdapter(
       child: Container(
         decoration: const BoxDecoration(
@@ -290,7 +319,7 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             const SizedBox(height: 20),
             SizedBox(
-              height: 130,
+              height: 150,
               child: PageView.builder(
                 controller: _bannerController,
                 itemCount: _banners.length,
@@ -298,98 +327,39 @@ class _DashboardPageState extends State<DashboardPage> {
                   setState(() => _currentBannerPage = index);
                 },
                 itemBuilder: (context, index) {
-                  final banner = _banners[index];
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: banner.gradient,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: banner.gradient.first.withOpacity(0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  banner.title,
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  banner.subtitle,
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white.withOpacity(0.85),
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    'Order Now',
-                                    style: GoogleFonts.poppins(
-                                      color: banner.gradient.first,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            banner.emoji,
-                            style: const TextStyle(fontSize: 52),
-                          ),
-                        ],
-                      ),
-                    ),
+                  return AnimatedBuilder(
+                    animation: _bannerController,
+                    builder: (context, child) {
+                      double value = 1.0;
+                      if (_bannerController.position.haveDimensions) {
+                        value = _bannerController.page! - index;
+                        value = (1 - (value.abs() * 0.15)).clamp(0.0, 1.0);
+                      } else {
+                        value = index == _currentBannerPage ? 1.0 : 0.85;
+                      }
+                      return Transform.scale(scale: value, child: child);
+                    },
+                    child: _buildBannerCard(_banners[index]),
                   );
                 },
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             // Page indicator dots
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 _banners.length,
                 (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  width: _currentBannerPage == index ? 20 : 6,
-                  height: 6,
+                  duration: const Duration(milliseconds: 400),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentBannerPage == index ? 24 : 8,
+                  height: 8,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(3),
+                    borderRadius: BorderRadius.circular(4),
                     color: _currentBannerPage == index
-                        ? AppTheme.primaryGreen
-                        : AppTheme.dividerColor,
+                        ? gradientColors[1]
+                        : Colors.grey.shade300,
                   ),
                 ),
               ),
@@ -397,6 +367,102 @@ class _DashboardPageState extends State<DashboardPage> {
             const SizedBox(height: 8),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBannerCard(_BannerData banner) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: banner.gradient,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: banner.gradient.first.withOpacity(0.4),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -10,
+            bottom: -10,
+            child: Text(
+              banner.emoji,
+              style: TextStyle(
+                fontSize: 100,
+                color: Colors.white.withOpacity(0.15),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        banner.title,
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        banner.subtitle,
+                        style: GoogleFonts.poppins(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'Order Now',
+                          style: GoogleFonts.poppins(
+                            color: banner.gradient.first,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(banner.emoji, style: const TextStyle(fontSize: 56)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
