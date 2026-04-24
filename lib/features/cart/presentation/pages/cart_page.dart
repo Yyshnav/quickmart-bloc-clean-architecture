@@ -15,7 +15,7 @@ class CartPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.scaffoldBg,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         foregroundColor: AppTheme.textPrimary,
         elevation: 0,
         title: BlocBuilder<CartBloc, CartState>(

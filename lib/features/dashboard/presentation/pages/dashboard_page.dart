@@ -19,15 +19,37 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   final ScrollController _scrollController = ScrollController();
-  final PageController _bannerController = PageController(viewportFraction: 0.88);
+  final PageController _bannerController = PageController(
+    viewportFraction: 0.88,
+  );
   int _currentBannerPage = 0;
 
   final Map<String, List<Color>> _categoryGradients = {
-    'All': [const Color(0xFF0C831F), const Color(0xFF14A829)],
-    'electronics': [const Color(0xFF1A237E), const Color(0xFF3949AB)],
-    'jewelery': [const Color(0xFFE65100), const Color(0xFFFB8C00)],
-    "men's clothing": [const Color(0xFF00695C), const Color(0xFF26A69A)],
-    "women's clothing": [const Color(0xFFAD1457), const Color(0xFFEC407A)],
+    'All': [
+      const Color(0xFF4A00E0),
+      const Color(0xFF8E2DE2),
+      const Color(0xFFD831FF),
+    ], // Vibrant Purple/Indigo
+    'electronics': [
+      const Color(0xFF00C6FF),
+      const Color(0xFF0072FF),
+      const Color(0xFF0033FF),
+    ], // Electric Blue
+    'jewelery': [
+      const Color(0xFFFF512F),
+      const Color(0xFFDD2476),
+      const Color(0xFFFF00CC),
+    ], // Hot Pink/Red
+    "men's clothing": [
+      const Color(0xFF00F260),
+      const Color(0xFF0575E6),
+      const Color(0xFF00C6FF),
+    ], // Aqua/Green
+    "women's clothing": [
+      const Color(0xFF1D976C),
+      const Color(0xFF93F9B9),
+      const Color(0xFFE8FFEF),
+    ], // Fresh Mint
   };
 
   // Banner data
@@ -71,8 +93,9 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: AppTheme.scaffoldBg,
       body: BlocBuilder<DashboardBloc, DashboardState>(
         builder: (context, state) {
-          final gradientColors = _categoryGradients[state.selectedCategory] ??
-              [AppTheme.primaryGreen, AppTheme.darkGreen];
+          final gradientColors =
+              _categoryGradients[state.selectedCategory] ??
+              [const Color(0xFF63412E), const Color(0xFF916A4D)];
 
           return Stack(
             children: [
@@ -84,19 +107,16 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: CustomScrollView(
                   controller: _scrollController,
                   slivers: [
-                    _buildSliverAppBar(gradientColors),
+                    _buildSliverAppBar(gradientColors, state),
                     if (state.isLoading)
                       _buildLoadingState()
                     else if (state.hasError)
                       _buildErrorState()
-                    else
-                      ...[
-                        _buildInvertedContainer(gradientColors),
-                        _buildPromotionalBanner(),
-                        _buildCategorySection(state),
-                        _buildSectionHeader('Products for You'),
-                        _buildProductGrid(state),
-                      ]
+                    else ...[
+                      _buildPromotionalBanner(),
+                      _buildSectionHeader('Products for You'),
+                      _buildProductGrid(state),
+                    ],
                   ],
                 ),
               ),
@@ -113,9 +133,9 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildSliverAppBar(List<Color> gradientColors) {
+  Widget _buildSliverAppBar(List<Color> gradientColors, DashboardState state) {
     return SliverAppBar(
-      expandedHeight: 130.0,
+      expandedHeight: 235.0,
       floating: false,
       pinned: true,
       elevation: 0,
@@ -140,86 +160,115 @@ class _DashboardPageState extends State<DashboardPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top row: Location + Profile
                   Row(
                     children: [
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'Delivery in ',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white.withOpacity(0.8),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                Text(
-                                  '10 minutes',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              'QuickMart',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w900,
+                                height: 1.1,
+                              ),
                             ),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: 4),
                             Row(
                               children: [
-                                const Icon(Icons.location_on, color: Colors.white, size: 16),
-                                const SizedBox(width: 4),
                                 Text(
-                                  'Home - 123 Main St, City',
+                                  'HOME - 123 Main St, City',
                                   style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 15,
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                const SizedBox(width: 4),
-                                const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 18),
+                                const Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.white,
+                                ),
                               ],
                             ),
                           ],
                         ),
                       ),
+                      // Wallet icon
                       Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
+                        width: 40,
+                        height: 40,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF06292),
+                          shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.person_outline, color: Colors.white, size: 22),
+                        child: const Icon(
+                          Icons.account_balance_wallet,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Profile icon
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.person,
+                          color: Colors.black,
+                          size: 24,
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 14),
-                  // Search bar
+                  const SizedBox(height: 18),
+                  // Search Bar
                   Container(
-                    height: 42,
+                    height: 50,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
+                        const SizedBox(width: 16),
+                        const Icon(Icons.search, color: Colors.black, size: 22),
                         const SizedBox(width: 12),
-                        const Icon(Icons.search, color: Colors.white70, size: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Search for products...',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white70,
-                            fontSize: 14,
+                        Expanded(
+                          child: Text(
+                            'Search "milk"',
+                            style: GoogleFonts.poppins(
+                              color: Colors.grey.shade600,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
+                        const VerticalDivider(
+                          width: 1,
+                          indent: 12,
+                          endIndent: 12,
+                        ),
+                        const SizedBox(width: 12),
+                        const Icon(Icons.mic, color: Colors.black, size: 22),
+                        const SizedBox(width: 16),
                       ],
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Categories directly on header background
+                  CategoryChips(
+                    categories: state.categories,
+                    selectedCategory: state.selectedCategory,
+                    onCategorySelected: (category) {
+                      context.read<DashboardBloc>().add(
+                        SelectCategoryEvent(category),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -230,180 +279,124 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildInvertedContainer(List<Color> gradientColors) {
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A), // Inverted dark container
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: gradientColors.first.withOpacity(0.2),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildInvertedAction(Icons.flash_on, 'Flash Deal', gradientColors),
-            _buildInvertedAction(Icons.local_fire_department, 'Trending', gradientColors),
-            _buildInvertedAction(Icons.star, 'Top Rated', gradientColors),
-            _buildInvertedAction(Icons.wallet_giftcard, 'Rewards', gradientColors),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInvertedAction(IconData icon, String label, List<Color> gradientColors) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: gradientColors,
-            ),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: gradientColors.first.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Icon(icon, color: Colors.white, size: 22),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: Colors.white.withOpacity(0.9), // Inverted text color
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPromotionalBanner() {
     return SliverToBoxAdapter(
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 130,
-            child: PageView.builder(
-              controller: _bannerController,
-              itemCount: _banners.length,
-              onPageChanged: (index) {
-                setState(() => _currentBannerPage = index);
-              },
-              itemBuilder: (context, index) {
-                final banner = _banners[index];
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 6),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: banner.gradient,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: banner.gradient.first.withOpacity(0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 130,
+              child: PageView.builder(
+                controller: _bannerController,
+                itemCount: _banners.length,
+                onPageChanged: (index) {
+                  setState(() => _currentBannerPage = index);
+                },
+                itemBuilder: (context, index) {
+                  final banner = _banners[index];
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: banner.gradient,
                       ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                banner.title,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                banner.subtitle,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white.withOpacity(0.85),
-                                  fontSize: 13,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  'Order Now',
-                                  style: GoogleFonts.poppins(
-                                    color: banner.gradient.first,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          banner.emoji,
-                          style: const TextStyle(fontSize: 52),
+                      boxShadow: [
+                        BoxShadow(
+                          color: banner.gradient.first.withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-                  ),
-                );
-              },
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  banner.title,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  banner.subtitle,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white.withOpacity(0.85),
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    'Order Now',
+                                    style: GoogleFonts.poppins(
+                                      color: banner.gradient.first,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            banner.emoji,
+                            style: const TextStyle(fontSize: 52),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          // Page indicator dots
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              _banners.length,
-              (index) => AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: _currentBannerPage == index ? 20 : 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(3),
-                  color: _currentBannerPage == index
-                      ? AppTheme.primaryGreen
-                      : AppTheme.dividerColor,
+            const SizedBox(height: 10),
+            // Page indicator dots
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                _banners.length,
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  width: _currentBannerPage == index ? 20 : 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3),
+                    color: _currentBannerPage == index
+                        ? AppTheme.primaryGreen
+                        : AppTheme.dividerColor,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-        ],
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }
@@ -494,12 +487,9 @@ class _DashboardPageState extends State<DashboardPage> {
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            return ProductCard(product: state.filteredProducts[index]);
-          },
-          childCount: state.filteredProducts.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return ProductCard(product: state.filteredProducts[index]);
+        }, childCount: state.filteredProducts.length),
       ),
     );
   }
@@ -514,50 +504,47 @@ class _DashboardPageState extends State<DashboardPage> {
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            return Shimmer.fromColors(
-              baseColor: Colors.grey.shade200,
-              highlightColor: Colors.grey.shade50,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(14),
-                            topRight: Radius.circular(14),
-                          ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return Shimmer.fromColors(
+            baseColor: Colors.grey.shade200,
+            highlightColor: Colors.grey.shade50,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(14),
+                          topRight: Radius.circular(14),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(height: 10, width: 80, color: Colors.white),
-                          const SizedBox(height: 6),
-                          Container(height: 10, width: 50, color: Colors.white),
-                          const SizedBox(height: 8),
-                          Container(height: 28, width: 60, color: Colors.white),
-                        ],
-                      ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(height: 10, width: 80, color: Colors.white),
+                        const SizedBox(height: 6),
+                        Container(height: 10, width: 50, color: Colors.white),
+                        const SizedBox(height: 8),
+                        Container(height: 28, width: 60, color: Colors.white),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          },
-          childCount: 6,
-        ),
+            ),
+          );
+        }, childCount: 6),
       ),
     );
   }
@@ -577,7 +564,11 @@ class _DashboardPageState extends State<DashboardPage> {
                   color: Colors.red.shade50,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.wifi_off_rounded, size: 36, color: Colors.red.shade400),
+                child: Icon(
+                  Icons.wifi_off_rounded,
+                  size: 36,
+                  color: Colors.red.shade400,
+                ),
               ),
               const SizedBox(height: 20),
               Text(

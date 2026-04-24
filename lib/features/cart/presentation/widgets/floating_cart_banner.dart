@@ -27,90 +27,91 @@ class FloatingCartBanner extends StatelessWidget {
               );
             },
             child: Container(
-              margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              margin: const EdgeInsets.fromLTRB(32, 0, 32, 20),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF0C831F), Color(0xFF0FA825)],
-                ),
-                borderRadius: BorderRadius.circular(14),
+                color: const Color(0xFF0C831F), // Darker green
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryGreen.withOpacity(0.35),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
               child: Row(
                 children: [
-                  // Cart icon with badge
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22),
-                      Positioned(
-                        top: -6,
-                        right: -8,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            '${state.totalItems}',
-                            style: GoogleFonts.poppins(
-                              color: AppTheme.primaryGreen,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w800,
+                  // Stacked Images
+                  SizedBox(
+                    width: 70,
+                    height: 40,
+                    child: Stack(
+                      children: List.generate(
+                        state.items.length > 3 ? 3 : state.items.length,
+                        (index) => Positioned(
+                          left: index * 16.0,
+                          child: Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: const Color(0xFF0C831F), width: 2),
+                              image: DecorationImage(
+                                image: NetworkImage(state.items[index].product.image),
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(width: 16),
-                  // Item count + price
+                  const SizedBox(width: 8),
+                  // Item count
                   Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${state.totalItems} item${state.totalItems > 1 ? 's' : ''}',
+                          'View Cart',
                           style: GoogleFonts.poppins(
-                            color: Colors.white.withOpacity(0.85),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                         Text(
-                          '\$${state.totalAmount.toStringAsFixed(2)}',
+                          '${state.totalItems} ITEM${state.totalItems > 1 ? 'S' : ''}',
                           style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  // View Cart
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'View Cart',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                  // Price and Arrow
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '\$${state.totalAmount.toStringAsFixed(2)}',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 14),
-                    ],
+                        const SizedBox(width: 4),
+                        const Icon(Icons.arrow_right, color: Colors.white, size: 24),
+                      ],
+                    ),
                   ),
                 ],
               ),
