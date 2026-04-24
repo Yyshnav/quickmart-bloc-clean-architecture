@@ -91,6 +91,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       _buildErrorState()
                     else
                       ...[
+                        _buildInvertedContainer(gradientColors),
                         _buildPromotionalBanner(),
                         _buildCategorySection(state),
                         _buildSectionHeader('Products for You'),
@@ -226,6 +227,71 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildInvertedContainer(List<Color> gradientColors) {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A1A1A), // Inverted dark container
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors.first.withOpacity(0.2),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildInvertedAction(Icons.flash_on, 'Flash Deal', gradientColors),
+            _buildInvertedAction(Icons.local_fire_department, 'Trending', gradientColors),
+            _buildInvertedAction(Icons.star, 'Top Rated', gradientColors),
+            _buildInvertedAction(Icons.wallet_giftcard, 'Rewards', gradientColors),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInvertedAction(IconData icon, String label, List<Color> gradientColors) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: gradientColors,
+            ),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: gradientColors.first.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Icon(icon, color: Colors.white, size: 22),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: Colors.white.withOpacity(0.9), // Inverted text color
+          ),
+        ),
+      ],
     );
   }
 
