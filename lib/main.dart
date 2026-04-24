@@ -26,12 +26,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthBloc>(
           create: (_) => di.sl<AuthBloc>()..add(CheckAuthStatusEvent()),
         ),
-        BlocProvider<CartBloc>(
-          create: (_) => di.sl<CartBloc>(),
-        ),
-        BlocProvider<DashboardBloc>(
-          create: (_) => di.sl<DashboardBloc>(),
-        ),
+        BlocProvider<CartBloc>(create: (_) => di.sl<CartBloc>()),
+        BlocProvider<DashboardBloc>(create: (_) => di.sl<DashboardBloc>()),
       ],
       child: MaterialApp(
         title: 'QuickMart',
