@@ -132,7 +132,7 @@ class ProductCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '\$${product.price.toStringAsFixed(2)}',
+                            '₹${product.price.toStringAsFixed(2)}',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -140,7 +140,7 @@ class ProductCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '\$${fakeMrp.toStringAsFixed(2)}',
+                            '₹${fakeMrp.toStringAsFixed(2)}',
                             style: GoogleFonts.poppins(
                               fontSize: 11,
                               fontWeight: FontWeight.w400,

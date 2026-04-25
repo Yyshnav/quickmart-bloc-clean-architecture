@@ -27,16 +27,16 @@ class FloatingCartBanner extends StatelessWidget {
               );
             },
             child: Container(
-              margin: const EdgeInsets.fromLTRB(32, 0, 32, 20),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              margin: const EdgeInsets.fromLTRB(48, 0, 48, 48),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: const Color(0xFF0C831F), // Darker green
-                borderRadius: BorderRadius.circular(16),
+                color: AppTheme.primaryGreen,
+                borderRadius: BorderRadius.circular(50),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    color: AppTheme.primaryGreen.withOpacity(0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
@@ -44,22 +44,27 @@ class FloatingCartBanner extends StatelessWidget {
                 children: [
                   // Stacked Images
                   SizedBox(
-                    width: 70,
-                    height: 40,
+                    width: 65,
+                    height: 36,
                     child: Stack(
                       children: List.generate(
                         state.items.length > 3 ? 3 : state.items.length,
                         (index) => Positioned(
-                          left: index * 16.0,
+                          left: index * 14.0,
                           child: Container(
-                            width: 38,
-                            height: 38,
+                            width: 34,
+                            height: 34,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
-                              border: Border.all(color: const Color(0xFF0C831F), width: 2),
+                              border: Border.all(
+                                color: AppTheme.primaryGreen,
+                                width: 2,
+                              ),
                               image: DecorationImage(
-                                image: NetworkImage(state.items[index].product.image),
+                                image: NetworkImage(
+                                  state.items[index].product.image,
+                                ),
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -68,7 +73,7 @@ class FloatingCartBanner extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 12),
                   // Item count
                   Expanded(
                     child: Column(
@@ -81,6 +86,7 @@ class FloatingCartBanner extends StatelessWidget {
                             color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w800,
+                            height: 1.2,
                           ),
                         ),
                         Text(
@@ -95,23 +101,31 @@ class FloatingCartBanner extends StatelessWidget {
                     ),
                   ),
                   // Price and Arrow
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '\$${state.totalAmount.toStringAsFixed(2)}',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 15,
-                          ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '₹${state.totalAmount.toStringAsFixed(2)}',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
                         ),
-                        const SizedBox(width: 4),
-                        const Icon(Icons.arrow_right, color: Colors.white, size: 24),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.white,
+                          size: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

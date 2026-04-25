@@ -27,64 +27,34 @@ class _DashboardPageState extends State<DashboardPage> {
   Timer? _bannerTimer;
 
   final Map<String, List<Color>> _categoryGradients = {
-    'All': [
-      const Color(0xFF4A00E0),
-      const Color(0xFF8E2DE2),
-      const Color(0xFFD831FF),
-    ], // Vibrant Purple/Indigo
-    'electronics': [
-      const Color(0xFF00C6FF),
-      const Color(0xFF0072FF),
-      const Color(0xFF0033FF),
-    ], // Electric Blue
-    'jewelery': [
-      const Color(0xFFFF512F),
-      const Color(0xFFDD2476),
-      const Color(0xFFFF00CC),
-    ], // Hot Pink/Red
+    'All': [const Color(0xFF2F80ED), const Color(0xFF56CCF2)],
+    'electronics': [const Color(0xFF6366F1), const Color(0xFF818CF8)],
+    'jewelery': [const Color(0xFFF59E0B), const Color(0xFFFCD34D)],
     "men's clothing": [
-      const Color(0xFF00F260),
-      const Color(0xFF0575E6),
-      const Color(0xFF00C6FF),
-    ], // Aqua/Green
+      const Color(0xFF374151),
+      const Color(0xFF6B7280),
+    ],
     "women's clothing": [
-      const Color(0xFF1D976C),
-      const Color(0xFF93F9B9),
-      const Color(0xFFE8FFEF),
-    ], // Fresh Mint
+      const Color(0xFFEC4899),
+      const Color(0xFFF9A8D4),
+    ],
   };
 
-  // Banner data
   final List<_BannerData> _banners = [
     _BannerData(
-      title: 'Flat 50% OFF',
-      subtitle: 'On your first order',
-      gradient: [
-        const Color(0xFF667EEA),
-        const Color(0xFF764BA2),
-        const Color(0xFF4A00E0),
-      ],
-      emoji: '🎉',
+      title: 'Dairy Products',
+      subtitle: 'Discover the nature taste',
+      image: 'assets/images/dairy_banner.png',
     ),
     _BannerData(
-      title: 'Fresh Veggies',
-      subtitle: 'Farm to table in 10 mins',
-      gradient: [
-        const Color(0xFF11998E),
-        const Color(0xFF38EF7D),
-        const Color(0xFF00F260),
-      ],
-      emoji: '🥬',
+      title: 'Eat Share Repeat',
+      subtitle: 'Delicious snacks for you',
+      image: 'assets/images/snacks_banner.png',
     ),
     _BannerData(
-      title: 'Weekend Deals',
-      subtitle: 'Free delivery above \$25',
-      gradient: [
-        const Color(0xFFF857A6),
-        const Color(0xFFFF5858),
-        const Color(0xFFFF00CC),
-      ],
-      emoji: '🚀',
+      title: 'Stay Healthy',
+      subtitle: 'Refreshing green tea garden',
+      image: 'assets/images/tea_banner.png',
     ),
   ];
 
@@ -118,6 +88,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double topPadding = MediaQuery.of(context).padding.top;
+
     return Scaffold(
       backgroundColor: AppTheme.scaffoldBg,
       body: BlocBuilder<DashboardBloc, DashboardState>(
@@ -136,7 +108,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: CustomScrollView(
                   controller: _scrollController,
                   slivers: [
-                    _buildSliverAppBar(gradientColors, state),
+                    _buildCollapsingSliverAppBar(gradientColors, topPadding),
+                    _buildStickySearchBar(gradientColors, state, topPadding),
+
                     if (state.isLoading)
                       _buildLoadingState()
                     else if (state.hasError)
@@ -162,148 +136,122 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildSliverAppBar(List<Color> gradientColors, DashboardState state) {
+  Widget _buildCollapsingSliverAppBar(
+      List<Color> gradientColors, double topPadding) {
     return SliverAppBar(
-      expandedHeight: 235.0,
+      primary: false,
+      expandedHeight: 85.0 + topPadding,
+      toolbarHeight: 0,
       floating: false,
-      pinned: true,
+      pinned: false,
+      snap: false,
       elevation: 0,
-      backgroundColor: gradientColors.first,
-      automaticallyImplyLeading: false,
+      backgroundColor: Colors.transparent,
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: EdgeInsets.zero,
-        collapseMode: CollapseMode.parallax,
         background: AnimatedContainer(
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 500),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: gradientColors,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                gradientColors[0],
+                Color.lerp(gradientColors[0], gradientColors[1], 0.4) ??
+                    gradientColors[0],
+              ],
             ),
           ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+          child: Padding(
+            padding: EdgeInsets.only(top: topPadding + 8, left: 16, right: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'QuickMart',
+                      Text(
+                        'QuickMart',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w900,
+                          height: 1.1,
+                          letterSpacing: -1,
+                        ),
+                      ),
+                      const SizedBox(height: 5), // User added spacing
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              'HOME - Kozhikode, Kerala 673001, India',
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 26,
-                                fontWeight: FontWeight.w900,
-                                height: 1.1,
+                                color: Colors.white.withOpacity(0.9),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Text(
-                                  'HOME - 123 Main St, City',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.white,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Wallet icon
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFF06292),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.account_balance_wallet,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Profile icon
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.person,
-                          color: Colors.black,
-                          size: 24,
-                        ),
+                          ),
+                          const Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
-                  // Search Bar
-                  Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 16),
-                        const Icon(Icons.search, color: Colors.black, size: 22),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Search "milk"',
-                            style: GoogleFonts.poppins(
-                              color: Colors.grey.shade600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                        const VerticalDivider(
-                          width: 1,
-                          indent: 12,
-                          endIndent: 12,
-                        ),
-                        const SizedBox(width: 12),
-                        const Icon(Icons.mic, color: Colors.black, size: 22),
-                        const SizedBox(width: 16),
-                      ],
-                    ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.all(9),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: 12),
-                  // Categories directly on header background
-                  CategoryChips(
-                    categories: state.categories,
-                    selectedCategory: state.selectedCategory,
-                    onCategorySelected: (category) {
-                      context.read<DashboardBloc>().add(
-                        SelectCategoryEvent(category),
-                      );
-                    },
+                  child: const Icon(
+                    Icons.account_balance_wallet_outlined,
+                    color: Colors.white,
+                    size: 20,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 10),
+                Container(
+                  padding: const EdgeInsets.all(9),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.person_outline,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildStickySearchBar(
+      List<Color> gradientColors, DashboardState state, double topPadding) {
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: _SearchBarDelegate(
+        gradientColors: gradientColors,
+        categories: state.categories,
+        selectedCategory: state.selectedCategory,
+        onCategorySelected: (category) {
+          context.read<DashboardBloc>().add(SelectCategoryEvent(category));
+        },
+        topPadding: topPadding,
       ),
     );
   }
@@ -345,7 +293,6 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
             const SizedBox(height: 12),
-            // Page indicator dots
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
@@ -376,107 +323,76 @@ class _DashboardPageState extends State<DashboardPage> {
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: banner.gradient,
-        ),
         boxShadow: [
           BoxShadow(
-            color: banner.gradient.first.withOpacity(0.4),
+            color: Colors.black.withOpacity(0.2),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -10,
-            bottom: -10,
-            child: Text(
-              banner.emoji,
-              style: TextStyle(
-                fontSize: 100,
-                color: Colors.white.withOpacity(0.15),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        banner.title,
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        banner.subtitle,
-                        style: GoogleFonts.poppins(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          'Order Now',
-                          style: GoogleFonts.poppins(
-                            color: banner.gradient.first,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            if (banner.image != null)
+              Positioned.fill(
+                child: Image.asset(banner.image!, fit: BoxFit.cover),
+              )
+            else
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: banner.gradient ?? [Colors.grey, Colors.blueGrey],
+                    ),
                   ),
                 ),
-                Text(banner.emoji, style: const TextStyle(fontSize: 56)),
-              ],
+              ),
+            Positioned(
+              right: 16,
+              bottom: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'EXPLORE',
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Colors.black,
+                      size: 10,
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategorySection(DashboardState state) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: CategoryChips(
-          categories: state.categories,
-          selectedCategory: state.selectedCategory,
-          onCategorySelected: (category) {
-            context.read<DashboardBloc>().add(SelectCategoryEvent(category));
-          },
+          ],
         ),
       ),
     );
@@ -670,16 +586,118 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
+class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
+  final List<Color> gradientColors;
+  final List<String> categories;
+  final String selectedCategory;
+  final ValueChanged<String> onCategorySelected;
+  final double topPadding;
+
+  _SearchBarDelegate({
+    required this.gradientColors,
+    required this.categories,
+    required this.selectedCategory,
+    required this.onCategorySelected,
+    required this.topPadding,
+  });
+
+  @override
+  double get minExtent => maxExtent;
+
+  @override
+  double get maxExtent => 125.0 + topPadding;
+
+  @override
+  bool shouldRebuild(covariant _SearchBarDelegate oldDelegate) {
+    return oldDelegate.gradientColors != gradientColors ||
+        oldDelegate.selectedCategory != selectedCategory ||
+        oldDelegate.categories != categories ||
+        oldDelegate.topPadding != topPadding;
+  }
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.lerp(gradientColors[0], gradientColors[1], 0.4) ??
+                gradientColors[0],
+            gradientColors[1],
+          ],
+        ),
+      ),
+      child: Column(
+        children: [
+          SizedBox(height: topPadding + 4),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  const SizedBox(width: 16),
+                  const Icon(Icons.search, color: Colors.black54, size: 22),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Search "ice cream"',
+                      style: GoogleFonts.poppins(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  Container(height: 30, width: 1, color: Colors.grey[300]),
+                  const SizedBox(width: 12),
+                  const Icon(
+                    Icons.mic_none_outlined,
+                    color: AppTheme.primaryGreen,
+                  ),
+                  const SizedBox(width: 16),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          CategoryChips(
+            categories: categories,
+            selectedCategory: selectedCategory,
+            onCategorySelected: onCategorySelected,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _BannerData {
   final String title;
   final String subtitle;
-  final List<Color> gradient;
-  final String emoji;
+  final String? image;
+  final List<Color>? gradient;
+  final String? emoji;
 
   _BannerData({
     required this.title,
     required this.subtitle,
-    required this.gradient,
-    required this.emoji,
+    this.image,
+    this.gradient,
+    this.emoji,
   });
 }

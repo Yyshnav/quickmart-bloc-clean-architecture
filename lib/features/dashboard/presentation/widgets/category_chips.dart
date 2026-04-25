@@ -34,7 +34,7 @@ class CategoryChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 75,
+      height: 55,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
@@ -51,21 +51,21 @@ class CategoryChips extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
                     emoji,
                     style: const TextStyle(
                       fontSize: 22,
-                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     category == 'All' ? 'All' : _capitalize(category),
                     style: GoogleFonts.poppins(
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -73,10 +73,17 @@ class CategoryChips extends StatelessWidget {
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 250),
                     height: 3,
-                    width: 24,
+                    width: 28,
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.black : Colors.transparent,
+                      color: isSelected ? Colors.white : Colors.transparent,
                       borderRadius: BorderRadius.circular(2),
+                      boxShadow: isSelected ? [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.5),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        )
+                      ] : [],
                     ),
                   ),
                 ],

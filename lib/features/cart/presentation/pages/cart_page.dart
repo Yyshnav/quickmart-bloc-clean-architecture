@@ -163,12 +163,12 @@ class CartPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 14),
-                          _buildBillRow('Item Total', '\$${state.totalAmount.toStringAsFixed(2)}'),
+                          _buildBillRow('Item Total', '₹${state.totalAmount.toStringAsFixed(2)}'),
                           const SizedBox(height: 10),
-                          _buildBillRow('Delivery Fee', '\$${mockDeliveryFee.toStringAsFixed(2)}',
+                          _buildBillRow('Delivery Fee', '₹${mockDeliveryFee.toStringAsFixed(2)}',
                               icon: Icons.delivery_dining_outlined, iconColor: AppTheme.primaryGreen),
                           const SizedBox(height: 10),
-                          _buildBillRow('Handling Fee', '\$${mockHandlingFee.toStringAsFixed(2)}',
+                          _buildBillRow('Handling Fee', '₹${mockHandlingFee.toStringAsFixed(2)}',
                               icon: Icons.shopping_bag_outlined, iconColor: AppTheme.accentOrange),
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 12),
@@ -186,7 +186,7 @@ class CartPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '\$${totalToPay.toStringAsFixed(2)}',
+                                '₹${totalToPay.toStringAsFixed(2)}',
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 15,
@@ -250,7 +250,7 @@ class CartPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '\$${totalToPay.toStringAsFixed(2)}',
+                            '₹${totalToPay.toStringAsFixed(2)}',
                             style: GoogleFonts.poppins(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -367,7 +367,7 @@ class CartPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '\$${item.product.price.toStringAsFixed(2)}',
+                  '₹${item.product.price.toStringAsFixed(2)}',
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
