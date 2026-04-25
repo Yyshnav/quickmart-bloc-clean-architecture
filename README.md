@@ -1,36 +1,58 @@
 # QuickMart MVP
 
-QuickMart is a single-session MVP built for a Flutter Engineer Technical Assessment. It mimics a quick-commerce application (like Swiggy Instamart) with vibrant UI, clean architecture, and robust state management.
+QuickMart is a Flutter MVP for a quick-commerce app (similar to Instamart). It focuses on clean architecture, responsive UI, and smooth user experience.
 
-## Setup Instructions
+## 🚀 Setup
 
-1.  **Flutter Version**: Ensure you are using Flutter 3.10+ (Dart 3.0+).
-2.  **Dependencies**: Run `flutter pub get` to install all packages.
-3.  **Run**: Execute `flutter run` on an emulator or physical device.
+1. Ensure Flutter 3.10+ is installed  
+2. Run:
+   flutter pub get  
+3. Start app:
+   flutter run  
 
-## Architectural Choices
+---
 
-This project strictly adheres to **Feature-First Clean Architecture**.
+## 🏗️ Architecture
 
-*   **lib/core**: Contains shared elements like custom network client (Dio wrapper), error/failure definitions, and global app themes.
-*   **lib/di**: Setup for dependency injection using `get_it`.
-*   **lib/features**: Features are separated into `auth`, `cart`, and `dashboard`.
-    *   **Data Layer**: Handles external APIs (`FakeStore`) via `Dio` and local storage via `SharedPreferences`. Models extend Entities.
-    *   **Domain Layer**: Contains pure business logic. Entities, abstract Repositories, and UseCases are defined here.
-    *   **Presentation Layer**: Utilizes `flutter_bloc` for state management and houses the UI widgets/pages.
+The project follows a **Feature-First Clean Architecture**:
 
-### State Management
-*   **flutter_bloc** is used across the app. 
-*   `CartBloc` is instantiated globally in `main.dart` to ensure cart state is accessible anywhere without context tunneling.
-*   `DashboardBloc` manages the UI state of the products grid, loading shimmers, and error handling.
-*   `AuthBloc` handles mock authentication and validates locally.
+- **core** → common utilities, theme, network handling  
+- **di** → dependency injection (get_it)  
+- **features** → divided into auth, cart, dashboard  
 
-### UI/UX
-*   The Dashboard features a `SliverAppBar` that changes color based on the selected category to mimic the dynamic Instamart experience.
-*   Products utilize a customized "ADD" button that gracefully switches to a `[-] 1 [+]` selector linked directly to the `CartBloc`.
-*   A `FloatingCartBanner` listens to `CartBloc` to display global cart metrics.
+Each feature includes:
+- Data (API & local storage)
+- Domain (business logic)
+- Presentation (UI with flutter_bloc)
 
-## Future Improvements (Time Constraints)
-*   **Git History**: Due to environmental constraints (git was not found in path), no local git commits could be made during this automated run. In a real scenario, atomic commits would be prefixed with `feat:`, `fix:`, `chore:`, etc.
-*   **Persistent Cart**: Currently, the cart is in-memory for the single session MVP. Implementing `CartLocalDataSource` with SQLite or SharedPreferences would make it persistent.
-*   **Unit Tests**: UseCases and BLoCs are structured to be highly testable, but tests were omitted due to the 8-10 hour scope constraint and focus on MVP delivery.
+---
+
+## ⚙️ State Management
+
+- Uses **flutter_bloc**
+- `CartBloc` → manages cart globally  
+- `DashboardBloc` → handles product UI & loading  
+- `AuthBloc` → manages login logic  
+
+---
+
+## 🎨 UI Features
+
+- Scroll-hide header with pinned search bar  
+- Responsive layout  
+- Category-based UI with dynamic colors  
+- Add-to-cart button with quantity controls  
+- Floating cart summary banner  
+
+---
+
+## ⚠️ Challenges & Solutions
+
+- **Scroll-hide header behavior** was tricky due to sliver coordination.  
+  → Solved by properly using `SliverAppBar` (non-pinned) and `SliverPersistentHeader` (pinned) with consistent styling.
+
+- **State management across features** was complex.  
+  → Handled using `flutter_bloc` with clear separation and a globally accessible `CartBloc`.
+
+- **Responsive UI issues** on different screens.  
+  → Fixed using flexible layouts, proper spacing, and testing on multiple screen sizes.
